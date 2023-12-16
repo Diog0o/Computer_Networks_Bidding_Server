@@ -1345,9 +1345,24 @@ string open_process(string user, string password, string name, string start_valu
                 throw runtime_error("Erro ao abrir o arquivo.");
             }
 
-            while (bytesLeft > 0){
-                int bytesRead = read(newfd, buffer, CHUNCK_SIZE);
-                bytesLeft -= bytesRead;
+
+            while (bytesLeft > 0) {
+            int bytesRead = read(newfd, buffer, CHUNCK_SIZE);
+            bytesLeft -= bytesRead;
+
+            // Verifica se é a última iteração
+            if (bytesLeft <= 0) {
+                // Se for a última iteração, calcula quantos bytes escrever
+                int bytesToWrite = bytesRead + bytesLeft;
+                size_t elements_written = fwrite(buffer, sizeof(char), bytesToWrite, jpgFile);
+
+                if (elements_written != bytesToWrite) {
+                    cerr << "Erro ao escrever no arquivo." << endl;
+                    fclose(jpgFile);
+                    throw runtime_error("Erro ao escrever no arquivo.");
+                }
+            } else {
+                // Caso contrário, escreve todo o buffer normalmente
                 size_t elements_written = fwrite(buffer, sizeof(char), bytesRead, jpgFile);
 
                 if (elements_written != bytesRead) {
@@ -1356,8 +1371,8 @@ string open_process(string user, string password, string name, string start_valu
                     throw runtime_error("Erro ao escrever no arquivo.");
                 }
             }
-
-
+        }
+           
             fclose(jpgFile);
 
             buffer_to_print = "ROA OK " + padLeft(to_string(AID), 3);
@@ -1785,7 +1800,6 @@ int tcp_server() {
                 cout << "sent by [" << host << ":" << service << "] Request type: " << first_word.c_str() << endl;
 
             }
-            cout << "first word: " << first_word << endl;
 
 
             if (first_word == "OPA"){
