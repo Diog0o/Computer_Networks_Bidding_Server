@@ -277,11 +277,9 @@ void checkMyAuctions(User &user){
  
     if(first_word=="RMA" && second_word=="OK"){//meter first e second word 
 
-        for(int i=2;i<splitted.size();i+=2){
-
-            string res="";
-            res=splitted[i]+" "+ splitted[i+1] +"\n";
-        }
+            for(int i=7;i<n;i++){
+                cout << processedData[i] ;
+            }
         
     }else if(strcmp(processedData,"RMA NOK\n")==0){
         printf("The user is not involved in any of the currently active auctions\n");
@@ -437,8 +435,9 @@ void check_show_record(){
 
     //retirar os 7 primeiros bytes do buffer e imprimir o resto
     for(int i=7;i<n;i++){
-        cout << processedData[i];
+        cout << processedData[i] << " ";
     }
+    cout << endl;
 
 
 
