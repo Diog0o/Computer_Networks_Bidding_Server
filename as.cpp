@@ -868,14 +868,15 @@ string my_auctionsprocess(string user){
         buffer = "RMA OK";
         vector<int> AIDs = getHostedAIDs((char*)user.c_str());
         for (int i = 0; i < AIDs.size(); i++){
+            cout <<"AID: " << AIDs[i] << endl;
             if (isAuctionEnded(AIDs[i]) == true){
-                buffer = buffer + " " + to_string(AIDs[i]) + " " + "0";
+                buffer = buffer + " " + padLeft(to_string(AIDs[i]),3) + " " + "0";
             }else{
-                buffer = buffer + " " + to_string(AIDs[i]) + " " + "1";
+                buffer = buffer + " " + padLeft(to_string(AIDs[i]),3) + " " + "1";
             }
         }
     }
-
+    cout << buffer << endl;
     return buffer;
 }
 
@@ -890,9 +891,9 @@ string my_bids_process (string user){
         vector<int> AIDs = getBiddedAIDs((char*)user.c_str());
         for (int i = 0; i < AIDs.size(); i++){
             if (isAuctionEnded(AIDs[i]) == true){
-                buffer = buffer + " " + to_string(AIDs[i]) + " " + "0";
+                buffer = buffer + " " + padLeft(to_string(AIDs[i]),3) + " " + "0";
             }else{
-                buffer = buffer + " " + to_string(AIDs[i]) + " " + "1";
+                buffer = buffer + " " + padLeft(to_string(AIDs[i]),3) + " " + "1";
             }
         }
     }
@@ -908,12 +909,13 @@ string list_process (){
         vector<int> AIDs = getAIDs();
         for (int i = 0; i < AIDs.size(); i++){
             if (isAuctionEnded(AIDs[i]) == true){
-                buffer = buffer + " " + to_string(AIDs[i]) + " " + "0";
+                buffer = buffer + " " + padLeft(to_string(AIDs[i]),3) + " " + "0";
             }else{
-                buffer = buffer + " " + to_string(AIDs[i]) + " " + "1";
+                buffer = buffer + " " + padLeft(to_string(AIDs[i]),3) + " " + "1";
             }
         }
     }
+    cout << buffer << endl;
     return buffer;
 }
 
@@ -1069,6 +1071,7 @@ int udp_server (){
             
         }
         else if(result[0] == "LMA" && result_size == 2 && result[1].size() == 6 && isNumeric(result[1])){
+            cout << "ENTROU NO LMA" << endl;
             string user = result[1];
             string message_to_send = my_auctionsprocess(user);
             message_to_send = message_to_send + "\n";
