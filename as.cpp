@@ -27,7 +27,7 @@
 
 
 
-#define BUFSIZE 128
+#define BUFSIZE 1024
 #define MAXQUEUE 5
 #define BUFFER_SIZE 128
 #define CHUNCK_SIZE 1024
@@ -929,11 +929,13 @@ string show_record_process (string AID){
         string auction_name = start_info[1];
         string asset_fname = start_info[2];
         string start_value = start_info[3];
-        string start_date_time = start_info[5];
+        string start_date = start_info[5]; 
+        string start_time = start_info[6];
         string timeactive = start_info[4];
 
-        buffer = buffer + " " + host_UID + " " + auction_name + " " + asset_fname + " " + start_value + " " + start_date_time + " " + timeactive;
 
+        buffer = buffer + " " + host_UID + " " + auction_name + " " + asset_fname + " " + start_value + " " + start_date + " " + start_time + " " + timeactive;
+        
         vector<int> bids = getBids(AID);
         vector<int> fiftyBids = get50Bids(bids);
         for (int i = 0; i < fiftyBids.size(); i++){
@@ -941,22 +943,25 @@ string show_record_process (string AID){
             vector<string> bid_info = splitString(bid);
             string bidder_UID = bid_info[0];
             string bid_value = bid_info[1];
-            string bid_date_time = bid_info[2];
-            string bid_sec_time = bid_info[3];
+            string bid_date = bid_info[2];
+            string bid_time = bid_info[3];
+            string bid_sec_time = bid_info[4];
 
-            buffer = buffer + " " + bidder_UID + " " + bid_value + " " + bid_date_time + " " + bid_sec_time;
+
+            buffer = buffer + " B " + bidder_UID + " " + bid_value + " " + bid_date + " " + bid_time + " " + bid_sec_time;
+
         }
 
         if (CheckAuctionEnd(stoi(AID)) == true){
             string end = getAuctionEnd(stoi(AID));
             vector<string> end_info = splitString(end);
-            string end_date_time = end_info[0];
-            string end_sec_time = end_info[1];
+            string end_date_time = end_info[0] + " " + end_info[1];
+            string end_sec_time = end_info[2];
 
-            buffer = buffer + " " + end_date_time + " " + end_sec_time;
+            buffer = buffer + " E " + end_date_time + " " + end_sec_time;
+
         }
     }
-    
     return buffer;
 
 }
@@ -1618,10 +1623,10 @@ void show_asset_process (string AID, int newfd){
         }
         fclose(filePointer);
 
-        // nread = write(newfd, "\n", 1);
-        // if (nread == -1) {
-        //     throw runtime_error("Error sending data over TCP");
-        // }
+        nread = write(newfd, "\n", 1);
+        if (nread == -1) {
+            throw runtime_error("Error sending data over TCP");
+        }
 
 
     }catch (exception& e) {
