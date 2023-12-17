@@ -22,7 +22,7 @@ ssize_t n;
 socklen_t addrlen;
 struct addrinfo hints,*res;
 struct sockaddr_in addr;
-char buffer[128];
+char buffer[6002];
 
 
 using namespace std;
@@ -392,8 +392,9 @@ void check_show_record(){
         cout<<"Erro de formataçao"<<endl;
         return;
     }
-
     char* processedData = processCharData(buffer,n);
+
+    cout << buffer << endl;
 
     string result= remove_slashN(buffer);
     vector<string> splitted = splitString(result);
@@ -401,19 +402,46 @@ void check_show_record(){
     string second_word=splitted[1];
     
     if(strcmp(first_word.c_str(),"RRC")==0 && strcmp(second_word.c_str(),"OK")==0){//meter first e second word 
+    
+    // cout << "RRC OK" << endl;
 
-        std::istringstream stream(buffer);
-        std::string word1, word2;
+    // string res = "Host UID: " + splitted[2] + "\n";
+    // res += "Auction Name: " + splitted[3] + "\n";
+    // res += "Asset Name: " + splitted[4] + "\n";
+    // res += "Start Value: " + splitted[5] + "\n";
+    // res += "Start Date Time: " + splitted[6] + " " + splitted[7] + "\n";
+    // res += "Timeactive: " + splitted[8] + "\n\n";
 
-        // Read and ignore the first two words
-        stream >> word1 >> word2;
+    // res += "BIDS:\n";
+    // int counter = 1;
+    // int i = 9;
+    // while (i < splitted.size() && splitted[i] == "B"){
+    //     res += "Bid " + to_string(counter++) + ":\n";
+    //     res += "Bidder UID: " + splitted[i+1] + "\n";
+    //     res += "Bid Value: " + splitted[i+2] + "\n";
+    //     res += "Bid Date Time: " + splitted[i+3] + " " + splitted[i+4] + "\n";
+    //     res += "Bid Sec Time: " + splitted[i+5] + "\n\n";
+    //     i += 6;
+    //     cout << "I: " << i<< res;
+    // }
 
-        // Print the rest of the buffer
-        std::string restOfBuffer;
-        std::getline(stream, restOfBuffer);
+    // int size = splitted.size();
 
-        std::cout << restOfBuffer << std::endl;
-        
+    // if (splitted[size-4] == "E"){
+    //     res += "Auction is closed\n";
+    //     res += "End Date Time: " + splitted[size-3] + " " + splitted[size-2] + "\n";
+    //     res += "End Sec Time: " + splitted[size-1] + "\n";
+    // }
+
+    // cout << res;
+
+    //retirar os 7 primeiros bytes do buffer e imprimir o resto
+    for(int i=7;i<n;i++){
+        cout << processedData[i];
+    }
+
+
+
     }else if(strcmp(processedData,"RRC NOK\n")==0){
         printf("Auction does not exist\n");
     }
@@ -793,7 +821,6 @@ int main(int argc, char *argv[]){
 
         else if(((first_word=="show_record")|| first_word=="sr")&& result.size()==2){
             udpclient.start_udp_client();
-            
             string aid = result[1];
             show_record(aid);
             check_show_record();
